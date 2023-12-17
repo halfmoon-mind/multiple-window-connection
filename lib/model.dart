@@ -1,10 +1,7 @@
 class ScreenLocationModel {
   final int index;
-
   final double x;
-
   final double y;
-
   final DateTime time;
 
   const ScreenLocationModel({

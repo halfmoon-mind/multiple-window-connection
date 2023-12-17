@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js' as js;
+import 'dart:html' as html;
 import 'package:js/js_util.dart' as js_util;
 
 import 'package:flutter/material.dart';
 import 'package:several_windows/model.dart';
-import 'dart:html' as html;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -102,30 +102,44 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('$index번째 스크린 | X : $x Y : $y'),
-      ),
-      body: Center(
-        child: CustomPaint(
-          painter: MyPainter(
-              startPoint: const Offset(0, 0),
-              otherPoints: list.map((e) {
-                if (e.index == index) return const Offset(0, 0);
-                return Offset(e.x - x, e.y - y);
-              }).toList()),
-        ),
+    return Center(
+      child: Stack(
+        children: [
+          CustomPaint(
+            painter: MyPainter(
+                color: Colors.red,
+                startPoint: const Offset(0, 0),
+                otherPoints: list.map((e) {
+                  if (e.index == index) return const Offset(0, 0);
+                  return Offset(e.x - x, e.y - y);
+                }).toList()),
+          ),
+          ...list.map((e) {
+            if (e.index == index) return const SizedBox();
+            return CustomPaint(
+              painter: MyPainter(
+                color: Colors.red,
+                startPoint: Offset(e.x - x, e.y - y),
+                otherPoints: list
+                    .where((item) => item.index != index)
+                    .map((item) => Offset(item.x - x, item.y - y))
+                    .toList(),
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }
 }
 
 class MyPainter extends CustomPainter {
+  final Color color;
   final Offset startPoint;
   final List<Offset> otherPoints;
 
   const MyPainter({
+    required this.color,
     required this.startPoint,
     required this.otherPoints,
   });
@@ -133,7 +147,7 @@ class MyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.red
+      ..color = color
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
