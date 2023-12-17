@@ -105,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Center(
       child: Stack(
         children: [
+          if (list.length == 1) const Text("창을 2개 이상 띄워주세요."),
           CustomPaint(
             painter: MyPainter(
                 color: Colors.red,
